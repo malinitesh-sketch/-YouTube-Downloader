@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Video Saver Website</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top left, #ff416c 0, transparent 32%),
+                  radial-gradient(circle at bottom right, #2575fc 0, transparent 34%),
+                  #101322;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+    }
+    .app {
+      width: 100%;
+      max-width: 1080px;
+      display: grid;
+      grid-template-columns: 1fr 390px;
+      gap: 24px;
+    }
+    .card {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 28px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.35);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+    .main { padding: 34px; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #ff0033, #ff7a00);
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      box-shadow: 0 12px 30px rgba(255,0,51,.35);
+    }
+    h1 { font-size: clamp(30px, 5vw, 58px); line-height: 1.02; margin-bottom: 12px; }
+    .subtitle { color: #d7dcff; font-size: 17px; line-height: 1.6; max-width: 680px; margin-bottom: 28px; }
+    .input-row {
+      display: flex;
+      gap: 12px;
+      background: rgba(0,0,0,.24);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 10px;
+      margin-bottom: 22px;
+    }
+    input, select {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      border-radius: 13px;
+      padding: 15px 16px;
+      font-size: 15px;
+      color: #111827;
+      background: #fff;
+    }
+    button {
+      border: 0;
+      cursor: pointer;
+      border-radius: 13px;
+      padding: 14px 20px;
+      color: #fff;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ff0033, #ff7a00);
+      box-shadow: 0 12px 28px rgba(255,82,37,.35);
+      transition: transform .18s ease, box-shadow .18s ease;
+      white-space: nowrap;
+    }
+    button:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(255,82,37,.45); }
+    button.secondary { background: rgba(255,255,255,.14); box-shadow: none; border: 1px solid rgba(255,255,255,.2); }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 18px; }
+    label { display: block; font-size: 13px; color: #d7dcff; margin-bottom: 8px; }
+    .option-card {
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 18px;
+      padding: 15px;
+    }
+    .checks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 18px 0 24px; }
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px;
+      border-radius: 15px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      color: #fff;
+      font-size: 14px;
+    }
+    .check input { width: auto; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .preview { padding: 20px; }
+    .thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border-radius: 20px;
+      background: #15192b;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,.14);
+      margin-bottom: 18px;
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .thumb svg { width: 70%; max-width: 230px; opacity: .82; }
+    .video-title { font-size: 21px; margin-bottom: 9px; }
+    .meta { color: #cfd5ff; line-height: 1.65; font-size: 14px; margin-bottom: 18px; }
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.13);
+      color: #e9ecff;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+    .pill { padding: 8px 11px; border-radius: 999px; background: rgba(255,255,255,.12); color: #e6e9ff; font-size: 12px; }
+    .note { margin-top: 18px; color: #cfd5ff; font-size: 12px; line-height: 1.6; }
+    @media (max-width: 860px) { .app { grid-template-columns: 1fr; } .grid, .checks { grid-template-columns: 1fr; } .input-row { flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <main class="card main">
+      <div class="brand">
+        <div class="logo">▶</div>
+        <div>
+          <strong>Video Saver</strong><br />
+          <small style="color:#cfd5ff">Download options UI</small>
+        </div>
+      </div>
+
+      <h1>YouTube Link Downloader Website</h1>
+      <p class="subtitle">
+        Paste a YouTube video link, choose video quality, audio-only format, or thumbnail image options.
+        Use only for videos you own or have permission to download.
+      </p>
+
+      <div class="input-row">
+        <input id="urlInput" type="url" placeholder="Paste YouTube video link here..." />
+        <button onclick="loadVideo()">Load Video</button>
+      </div>
+
+      <div class="grid">
+        <div class="option-card">
+          <label for="downloadType">What do you want to download?</label>
+          <select id="downloadType" onchange="updateStatus()">
+            <option value="video">Video + Audio</option>
+            <option value="audio">Audio Only</option>
+            <option value="thumbnail">Thumbnail Image</option>
+          </select>
+        </div>
+        <div class="option-card">
+          <label for="quality">Select Quality</label>
+          <select id="quality" onchange="updateStatus()">
+            <option>Best Available</option>
+            <option>2160p / 4K</option>
+            <option>1440p / 2K</option>
+            <option>1080p Full HD</option>
+            <option>720p HD</option>
+            <option>480p</option>
+            <option>360p</option>
+            <option>Audio Best</option>
+          </select>
+        </div>
+        <div class="option-card">
+          <label for="format">Format</label>
+          <select id="format" onchange="updateStatus()">
+            <option>MP4</option>
+            <option>WEBM</option>
+            <option>MP3</option>
+            <option>M4A</option>
+            <option>JPG Thumbnail</option>
+            <option>WEBP Thumbnail</option>
+          </select>
+        </div>
+        <div class="option-card">
+          <label for="filename">File Name</label>
+          <input id="filename" placeholder="my-video" oninput="updateStatus()" />
+        </div>
+      </div>
+
+      <div class="checks">
+        <label class="check"><input type="checkbox" id="subtitles" onchange="updateStatus()" /> Include subtitles</label>
+        <label class="check"><input type="checkbox" id="metadata" onchange="updateStatus()" checked /> Add metadata</label>
+        <label class="check"><input type="checkbox" id="playlist" onchange="updateStatus()" /> Playlist mode</label>
+        <label class="check"><input type="checkbox" id="thumbnailEmbed" onchange="updateStatus()" /> Embed thumbnail</label>
+      </div>
+
+      <div class="actions">
+        <button onclick="downloadSelected()">Download Selected</button>
+        <button class="secondary" onclick="downloadThumb()">Download Thumbnail</button>
+        <button class="secondary" onclick="copySummary()">Copy Options</button>
+      </div>
+
+      <div id="status" class="status">Paste a link and choose your download options.</div>
+      <p class="note">
+        Note: This is a front-end website template. Real YouTube downloading requires a lawful backend service and must follow copyright law and platform terms.
+      </p>
+    </main>
+
+    <aside class="card preview">
+      <div class="thumb" id="thumbBox">
+        <img id="thumbImg" alt="Video thumbnail" />
+        <svg id="placeholder" viewBox="0 0 420 240" xmlns="http://www.w3.org/2000/svg">
+          <rect width="420" height="240" rx="26" fill="#232842"/>
+          <circle cx="210" cy="120" r="58" fill="#ff0033"/>
+          <path d="M194 88l54 32-54 32V88z" fill="white"/>
+          <text x="210" y="210" text-anchor="middle" fill="#cfd5ff" font-family="Arial" font-size="18">Thumbnail Preview</text>
+        </svg>
+      </div>
+      <h2 class="video-title" id="videoTitle">No video loaded</h2>
+      <p class="meta" id="videoMeta">When you paste a valid YouTube link, this panel will show thumbnail preview and the detected video ID.</p>
+      <div class="pill-row">
+        <span class="pill">Video Quality</span>
+        <span class="pill">Audio Only</span>
+        <span class="pill">Thumbnail</span>
+        <span class="pill">Subtitles</span>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    let currentVideoId = '';
+
+    function getYouTubeId(url) {
+      try {
+        const u = new URL(url.trim());
+        if (u.hostname.includes('youtu.be')) return u.pathname.slice(1).split('/')[0];
+        if (u.searchParams.get('v')) return u.searchParams.get('v');
+        const shorts = u.pathname.match(/\/shorts\/([^/?]+)/);
+        if (shorts) return shorts[1];
+        const embed = u.pathname.match(/\/embed\/([^/?]+)/);
+        if (embed) return embed[1];
+      } catch (e) {}
+      return '';
+    }
+
+    function loadVideo() {
+      const url = document.getElementById('urlInput').value;
+      const id = getYouTubeId(url);
+      const status = document.getElementById('status');
+      if (!id) {
+        currentVideoId = '';
+        status.innerHTML = 'Please enter a valid YouTube URL, for example: https://www.youtube.com/watch?v=VIDEO_ID';
+        return;
+      }
+      currentVideoId = id;
+      const img = document.getElementById('thumbImg');
+      const placeholder = document.getElementById('placeholder');
+      img.src = `https://img.youtube.com/vi/${id}/maxresdefault.jpg`;
+      img.onload = () => { img.style.display = 'block'; placeholder.style.display = 'none'; };
+      img.onerror = () => { img.src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`; img.style.display = 'block'; placeholder.style.display = 'none'; };
+      document.getElementById('videoTitle').textContent = 'YouTube Video Loaded';
+      document.getElementById('videoMeta').innerHTML = `Video ID: <strong>${id}</strong><br>Choose your download type and quality.`;
+      updateStatus();
+    }
+
+    function getOptionsText() {
+      const type = document.getElementById('downloadType').value;
+      const quality = document.getElementById('quality').value;
+      const format = document.getElementById('format').value;
+      const filename = document.getElementById('filename').value || 'download';
+      const subtitles = document.getElementById('subtitles').checked ? 'Yes' : 'No';
+      const metadata = document.getElementById('metadata').checked ? 'Yes' : 'No';
+      const playlist = document.getElementById('playlist').checked ? 'Yes' : 'No';
+      const embedThumb = document.getElementById('thumbnailEmbed').checked ? 'Yes' : 'No';
+      return `Video ID: ${currentVideoId || 'Not loaded'}\nType: ${type}\nQuality: ${quality}\nFormat: ${format}\nFile name: ${filename}\nSubtitles: ${subtitles}\nMetadata: ${metadata}\nPlaylist mode: ${playlist}\nEmbed thumbnail: ${embedThumb}`;
+    }
+
+    function updateStatus() {
+      const type = document.getElementById('downloadType').value;
+      const quality = document.getElementById('quality').value;
+      const format = document.getElementById('format').value;
+      const filename = document.getElementById('filename').value || 'download';
+      document.getElementById('status').innerHTML = currentVideoId
+        ? `Ready: <strong>${type}</strong> download in <strong>${quality}</strong>, format <strong>${format}</strong>, file name <strong>${filename}</strong>.`
+        : 'Paste a YouTube link and choose your download options.';
+    }
+
+    function downloadSelected() {
+      if (!currentVideoId) return alert('Please load a valid YouTube link first.');
+      alert('This template shows the website UI. Connect this button to your lawful backend download API.\n\n' + getOptionsText());
+    }
+
+    function downloadThumb() {
+      if (!currentVideoId) return alert('Please load a valid YouTube link first.');
+      const link = document.createElement('a');
+      link.href = `https://img.youtube.com/vi/${currentVideoId}/maxresdefault.jpg`;
+      link.download = (document.getElementById('filename').value || currentVideoId) + '-thumbnail.jpg';
+      link.target = '_blank';
+      link.click();
+    }
+
+    async function copySummary() {
+      const text = getOptionsText();
+      try {
+        await navigator.clipboard.writeText(text);
+        alert('Download options copied.');
+      } catch (e) {
+        alert(text);
+      }
+    }
+  </script>
+</body>
+</html>
