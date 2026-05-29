@@ -11,6 +11,17 @@ from flask import Flask, after_this_request, jsonify, request, send_file, send_f
 from yt_dlp import YoutubeDL
 
 BASE_DIR = Path(__file__).resolve().parent
+def get_cookie_file():
+    candidates = [
+        os.environ.get("YTDLP_COOKIE_FILE"),
+        str(BASE_DIR / "cookies.txt"),
+    ]
+
+    for path in candidates:
+        if path and os.path.exists(path):
+            return path
+
+    return None
 PUBLIC_DIR = BASE_DIR / "public"
 
 app = Flask(__name__, static_folder=str(PUBLIC_DIR), static_url_path="")
@@ -175,7 +186,10 @@ def api_download():
             "restrictfilenames": False,
             "windowsfilenames": True,
         }
-
+        cookie_file = get_cookie_file()
+        if cookie_file: 
+            ydl_opts["cookiefile"] = cookie_file
+    
         if kind == "video":
             if file_format in {"mp4", "webm"}:
                 ydl_opts["merge_output_format"] = file_format
